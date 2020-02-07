@@ -763,9 +763,10 @@ limitations under the License.
                               labsColorSelector, labsChartAssigner, minX, maxX, selectedLabsTime);
         
 
-        
+        //This for loop generates the waveforms for all the keys(only Vitals are included).
         for (idx in allEvents) {
           const event = allEvents[idx];
+          //This if makes only the title line of Vitals in the Patient Timeline
           if (event.category != currentCat) {
             currentCat = event.category;
             currentCatSelection = holder.append('div').classed('cat-holder', true);
@@ -797,6 +798,8 @@ limitations under the License.
                                           .classed('chart-holder-inner', true);
           let x = Object.keys(event.events).filter(time => event.events[time].value_num != null);
           let y = x.map(time => event.events[time].value_num);
+          //x means timestamps for this key with valid measure number.
+          //y means the measure numbers according to x
           if (!y.some((el) => el != null)) {
             continue;
           }
@@ -835,6 +838,7 @@ limitations under the License.
             },
             grid: gridData,
           });
+          break
         }
 
 
