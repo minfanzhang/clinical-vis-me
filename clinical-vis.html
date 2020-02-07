@@ -677,8 +677,14 @@ limitations under the License.
         if (allNursingNotes.length > 0) {
           selectedNoteTime = allNursingNotes[allNursingNotes.length - 1].timestamp;
         }
+
+
+
         this.generateBarChart(allNoteTimes, notesClickListener, 'Notes', notesBarLabeler,
                               notesColorSelector, notesChartAssigner, minX, maxX, selectedNoteTime);
+        
+
+
         const labsClickListener = (e) => {
           this.labsTime = new Date(e.x).toLocaleString('en-US', {timeZone: 'UTC'});
           this.labsTimestamp = new Date(e.x).getTime() / 1000;
@@ -710,7 +716,13 @@ limitations under the License.
           this.selectedLabsIndex = e.index;
           this.labsChart.flush();
         };
+
+
+
         const labResultsList = Object.keys(this.labResultsByTimestamp).sort();
+
+
+
         const labsBarLabeler = (v, id, i, j) => {
           if (!v) {
             return null;
@@ -731,6 +743,9 @@ limitations under the License.
                   this.labResultsByTimestamp[labResultsList[index]][0].key :
                   this.labResultsByTimestamp[labResultsList[index]][0].key.substring(0, 8) + '...';
         }
+
+
+
         const labsColorSelector = (color, d) => typeof d ==='object' && 'index' in d && d.index == this.selectedLabsIndex ? '#1ca4bc' : '#F2946B';
         const labsChartAssigner = chart => this.labsChart = chart;
         let selectedLabsTime = labResultsList.length > 0 ? labResultsList[labResultsList.length - 1] : 0;
@@ -741,8 +756,14 @@ limitations under the License.
             break;
           }
         }
+
+
+
         this.generateBarChart(labResultsList, labsClickListener, 'Labs', labsBarLabeler,
                               labsColorSelector, labsChartAssigner, minX, maxX, selectedLabsTime);
+        
+
+        
         for (idx in allEvents) {
           const event = allEvents[idx];
           if (event.category != currentCat) {
@@ -815,7 +836,13 @@ limitations under the License.
             grid: gridData,
           });
         }
+
+
+
       },
+
+
+
       generateBarChart(timeList, clickListener, label, barLabeler, colorSelector, assigner, minX,
                         maxX, timeOfPreselectedNote) {
         const holder = d3.select(this.$.chartstop).append('div').classed('cat-holder', true);
@@ -888,6 +915,9 @@ limitations under the License.
         assigner(chart);
         clickListener(selectedItem);
       }
+
+
+
     });
   </script>
 </dom-module>
