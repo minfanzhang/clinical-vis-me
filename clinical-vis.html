@@ -539,6 +539,7 @@ limitations under the License.
           }
         }
         this.generateCharts(eventsByCat, json.notes.sort((a, b) => a.timestamp - b.timestamp));
+        this.generate_single_waveform(eventsByCat, json.notes.sort((a, b) => a.timestamp - b.timestamp));
       },
       generateCharts: function(eventsByCat, notes) {
         const allEvents = []
@@ -761,6 +762,25 @@ limitations under the License.
 
         this.generateBarChart(labResultsList, labsClickListener, 'Labs', labsBarLabeler,
                               labsColorSelector, labsChartAssigner, minX, maxX, selectedLabsTime);
+
+        //this.generate_single_waveform();
+        dummay_currentCat = "dummy_Vitals";
+        dummay_currentCatSelection = holder.append('div').classed('cat-holder', true);
+        const dummy_vitalsHeadingHolder = dummay_currentCatSelection.append('div');
+        dummy_vitalsHeadingHolder.classed('vitals-top-holder', true);
+        dummy_vitalsHeadingHolder.append('div').classed('cat-holder-inner', true).html("dummy_Vitals");
+        const dummy_xAxisVis = dummy_vitalsHeadingHolder.append("svg:svg")
+                               .attr('class', 'vitals-axis-holder')
+                               .attr("width", xAxisWidth)
+                               .attr("height", xAxisHeight)
+                               .attr('overflow', 'auto');
+        dummy_xAxisVis.append("g")
+                .attr("class", "xaxis")
+                .attr("transform", "translate(0," + xAxisHeight + ")")
+                .call(xAxis.tickFormat(d3.timeFormat("%I %p")).tickSize(-10));
+
+
+      
         
 
         //This for loop generates the waveforms for all the keys(only Vitals are included).
@@ -918,6 +938,137 @@ limitations under the License.
         });
         assigner(chart);
         clickListener(selectedItem);
+      },
+
+
+
+      generate_single_waveform(eventsByCat, notes) {
+        /*const holder = d3.select(this.$.chartstop);
+        const xAxisHeight = 20;
+        const xAxisWidth = holder.node().getBoundingClientRect().width - 190 - 40;
+        const minX = 6727647600;
+        const maxX = 6727647600;
+        const offsetToUTC = new Date(minX * 1000).getTimezoneOffset() * 60;
+        const xScale = d3.time.scale()
+                          .domain([new Date((minX + offsetToUTC) * 1000), new Date((maxX + offsetToUTC) * 1000)])
+                          .rangeRound([0, xAxisWidth]);
+        const xAxis = d3.svg.axis()
+                            .orient('top')
+                            .scale(xScale);*/
+
+
+
+
+                            const allEvents = []
+        minX = Number.MAX_VALUE;
+        maxX = 0;
+        const vitalsOrdering = {
+          'Temperature': 0,
+          'Heart Rate': 1,
+          'Systolic blood pressure': 2,
+          'Diastolic blood pressure': 3,
+          'Mean blood pressure': 4,
+          'Respiratory rate': 5,
+          'Oxygen saturation': 6,
+          'Urine output': 7,
+          'Weight': 8,
+          'Glascow coma scale': 9,
+        };
+        const labOrdering = {
+          'Sodium': 0,
+          'Potassium': 1,
+          'Chloride': 2,
+          'Bicarbonate': 3,
+          'Blood urea nitrogen': 4,
+          'Creatinine': 5,
+          'Glucose': 6,
+        };
+        for (cat in eventsByCat) {
+          let keys = Object.keys(eventsByCat[cat]);
+          if (cat == 'Vitals') {
+            keys = keys.sort((a, b) => {
+              if (a in vitalsOrdering && b in vitalsOrdering) {
+                return vitalsOrdering[a] - vitalsOrdering[b];
+              }
+              if (a in vitalsOrdering) {
+                return -1;
+              }
+              if (b in vitalsOrdering) {
+                return 1;
+              }
+              else {
+                return a - b;
+              }});
+          }
+          for (key of keys) {
+            if (cat == 'Vitals') {
+              allEvents.push({key: key, category: cat, events: eventsByCat[cat][key]});
+            }
+            const times = Object.keys(eventsByCat[cat][key]).map((time) => eventsByCat[cat][key][time].timestamp)
+            minX = Math.min(minX, ...times);
+            maxX = Math.max(maxX, ...times);
+          }
+        }
+        for (note of notes) {
+          minX = Math.min(minX, +note.timestamp);
+          maxX = Math.max(maxX, +note.timestamp);
+        }
+        // Pad one extra hour to ensure enough space for edge data points and their labels.
+        minX -= 60 * 60;
+        maxX += 60 * 60;
+        this.minX = minX;
+        this.maxX = maxX;
+        this.labResultsByTimestamp = {}
+        const labKeys = [];
+        for (key in eventsByCat['Labs']) {
+          labKeys.push(key);
+          for (timestamp in eventsByCat['Labs'][key]) {
+            lab_bar_timestamp = timestamp - (timestamp % (60 * 60));
+            if (!(lab_bar_timestamp in this.labResultsByTimestamp)) {
+              this.labResultsByTimestamp[lab_bar_timestamp] = [];
+            }
+            this.labResultsByTimestamp[lab_bar_timestamp].push({
+              key: key,
+              value: 'value_num' in eventsByCat['Labs'][key][timestamp] ?
+                  eventsByCat['Labs'][key][timestamp].value_num :
+                  eventsByCat['Labs'][key][timestamp].value_str});
+          }
+        }
+        this.labsList = labKeys;
+        const holder = d3.select(this.$.chartstop)
+        let currentCat = '';
+        let currentCatSelection = null;
+        const xAxisWidth = holder.node().getBoundingClientRect().width - 190 - 40;
+        const xAxisHeight = 20;
+        const xAxisVis = holder.append("svg:svg")
+                               .attr('class', 'xaxis-holder')
+                               .attr("width", xAxisWidth)
+                               .attr("height", xAxisHeight)
+                               .attr('overflow', 'visible');
+        const offsetToUTC = new Date(minX * 1000).getTimezoneOffset() * 60;
+        const xScale = d3.time.scale()
+                          .domain([new Date((minX + offsetToUTC) * 1000), new Date((maxX + offsetToUTC) * 1000)])
+                          .rangeRound([0, xAxisWidth]);
+        const xAxis = d3.svg.axis()
+                            .orient('top')
+                            .scale(xScale);
+
+
+
+        dummay_currentCat = "dummy_Vitals";
+        dummay_currentCatSelection = holder.append('div').classed('cat-holder', true);
+        const dummy_vitalsHeadingHolder = dummay_currentCatSelection.append('div');
+        dummy_vitalsHeadingHolder.classed('vitals-top-holder', true);
+        dummy_vitalsHeadingHolder.append('div').classed('cat-holder-inner', true).html("dummy_Vitals");
+        const dummy_xAxisVis = dummy_vitalsHeadingHolder.append("svg:svg")
+                               .attr('class', 'vitals-axis-holder')
+                               .attr("width", xAxisWidth)
+                               .attr("height", xAxisHeight)
+                               .attr('overflow', 'auto');
+        dummy_xAxisVis.append("g")
+                .attr("class", "xaxis")
+                .attr("transform", "translate(0," + xAxisHeight + ")")
+                .call(xAxis.tickFormat(d3.timeFormat("%I %p")).tickSize(-10));
       }
 
 
