@@ -329,11 +329,11 @@ limitations under the License.
     </div>
     <div class="charts-and-labs">
       <div id="textarea">
-        <div class="note-card">
+        <!--<div class="note-card">
           <div class="note-heading"><span class="heading-label">Selected Note</span> [[noteTime]]</div>
           <div class="note-text">[[noteText]]</div>
-        </div>
-        <div class="lab-card">
+        </div> -->
+        <!--<div class="lab-card">
           <div class="lab-heading"><span class="heading-label">Selected Labs</span> [[labsTime]]</div>
           <div class="selected-labs">
             <template is="dom-repeat" items="[[labsList]]">
@@ -345,7 +345,7 @@ limitations under the License.
               </div>
             </template>
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="chart-card">
         <div class="chart-card-heading">Patient Timeline</div>
@@ -766,7 +766,7 @@ limitations under the License.
         //this.generate_single_waveform();
 
         //This for loop generates the waveforms for all the keys(only Vitals are included).
-        for (idx in allEvents) {
+        /*for (idx in allEvents) {
           const event = allEvents[idx];
           //This if makes only the title line of Vitals in the Patient Timeline
           if (event.category != currentCat) {
@@ -841,7 +841,7 @@ limitations under the License.
             grid: gridData,
           });
           break
-        }
+        }*/
 
 
 
@@ -925,23 +925,7 @@ limitations under the License.
 
 
       generate_single_waveform(eventsByCat, notes) {
-        /*const holder = d3.select(this.$.chartstop);
-        const xAxisHeight = 20;
-        const xAxisWidth = holder.node().getBoundingClientRect().width - 190 - 40;
-        const minX = 6727647600;
-        const maxX = 6727647600;
-        const offsetToUTC = new Date(minX * 1000).getTimezoneOffset() * 60;
-        const xScale = d3.time.scale()
-                          .domain([new Date((minX + offsetToUTC) * 1000), new Date((maxX + offsetToUTC) * 1000)])
-                          .rangeRound([0, xAxisWidth]);
-        const xAxis = d3.svg.axis()
-                            .orient('top')
-                            .scale(xScale);*/
-
-
-
-
-                            const allEvents = []
+        const allEvents = []
         minX = Number.MAX_VALUE;
         maxX = 0;
         const vitalsOrdering = {
