@@ -328,12 +328,12 @@ limitations under the License.
       </div>
     </div>
     <div class="charts-and-labs">
-      <div id="textarea">
-        <!--<div class="note-card">
+      <!--<div id="textarea">
+        <div class="note-card">
           <div class="note-heading"><span class="heading-label">Selected Note</span> [[noteTime]]</div>
           <div class="note-text">[[noteText]]</div>
-        </div> -->
-        <!--<div class="lab-card">
+        </div>
+        <div class="lab-card">
           <div class="lab-heading"><span class="heading-label">Selected Labs</span> [[labsTime]]</div>
           <div class="selected-labs">
             <template is="dom-repeat" items="[[labsList]]">
@@ -345,8 +345,8 @@ limitations under the License.
               </div>
             </template>
           </div>
-        </div> -->
-      </div>
+        </div>
+      </div> -->
       <div class="chart-card">
         <div class="chart-card-heading">Patient Timeline</div>
         <div id="chartstop"></div>
@@ -538,7 +538,7 @@ limitations under the License.
             eventsByCat[cat][key] = timeToEvents;
           }
         }
-        this.generateCharts(eventsByCat, json.notes.sort((a, b) => a.timestamp - b.timestamp));
+        //this.generateCharts(eventsByCat, json.notes.sort((a, b) => a.timestamp - b.timestamp));
         this.generate_single_waveform(eventsByCat, json.notes.sort((a, b) => a.timestamp - b.timestamp));
       },
       generateCharts: function(eventsByCat, notes) {
@@ -1079,6 +1079,10 @@ limitations under the License.
           },
           grid: dummy_gridData,
         });
+
+        const dummay_barDiv = dummay_currentCatSelection.append('div').classed('chart-holder', true)
+            .append('div').classed('chart-holder-inner-bar', true).classed('chart-holder-inner', true);
+        
 
 
       }
