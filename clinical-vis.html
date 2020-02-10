@@ -764,24 +764,6 @@ limitations under the License.
                               labsColorSelector, labsChartAssigner, minX, maxX, selectedLabsTime);
 
         //this.generate_single_waveform();
-        dummay_currentCat = "dummy_Vitals";
-        dummay_currentCatSelection = holder.append('div').classed('cat-holder', true);
-        const dummy_vitalsHeadingHolder = dummay_currentCatSelection.append('div');
-        dummy_vitalsHeadingHolder.classed('vitals-top-holder', true);
-        dummy_vitalsHeadingHolder.append('div').classed('cat-holder-inner', true).html("dummy_Vitals");
-        const dummy_xAxisVis = dummy_vitalsHeadingHolder.append("svg:svg")
-                               .attr('class', 'vitals-axis-holder')
-                               .attr("width", xAxisWidth)
-                               .attr("height", xAxisHeight)
-                               .attr('overflow', 'auto');
-        dummy_xAxisVis.append("g")
-                .attr("class", "xaxis")
-                .attr("transform", "translate(0," + xAxisHeight + ")")
-                .call(xAxis.tickFormat(d3.timeFormat("%I %p")).tickSize(-10));
-
-
-      
-        
 
         //This for loop generates the waveforms for all the keys(only Vitals are included).
         for (idx in allEvents) {
@@ -1069,6 +1051,52 @@ limitations under the License.
                 .attr("class", "xaxis")
                 .attr("transform", "translate(0," + xAxisHeight + ")")
                 .call(xAxis.tickFormat(d3.timeFormat("%I %p")).tickSize(-10));
+
+        const dummy_keyAndChartDiv = dummay_currentCatSelection.append('div').classed(
+            'key-and-chart-holder', true);
+        const dummy_chartUnits = this.getKeyUnits("Temperature");
+        const dummy_chartRange = this.getKeyRange("Temperature");
+        const dummy_chartTitleDiv = dummy_keyAndChartDiv.append('div');
+        dummy_chartTitleDiv.classed('key-holder', true).html("Temperature");
+        dummy_chartTitleDiv.append('span').classed('chart-units', true).classed('lab-units', true).html('(' + dummy_chartUnits + ')');
+        const dummy_chartDiv = dummy_keyAndChartDiv.append('div')
+                                        .classed('chart-holder', true)
+                                        .append('div')
+                                        .classed('chart-holder-inner', true);
+        const dummy_x = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
+        const dummy_y = ["Temperature", 37.46, 37.34, 37.57, 37.57];
+        const dummy_gridData = {y: {show: true}};
+        dummy_gridData.y['lines'] = [
+          {value: +dummy_chartRange[0], class: 'limit-line'},
+          {value: +dummy_chartRange[1], class: 'limit-line'},
+        ];
+
+        const dummy_colorSelector = (color, d) => '#db5825';
+        const dummy_chart = c3.generate({
+          bindto: dummy_chartDiv,
+          data: {
+            x: 'time',
+            xFormat: '%Y-%m-%dT%H:%M:%S.%LZ',
+            columns: [dummy_x, dummy_y],
+            labels: {
+              format: (v, id, i, j) => +(+v).toFixed(2) + '',
+            },
+            color: dummy_colorSelector,
+          },
+          size: {
+            height: 60,
+          },
+          axis: {
+            x: {show: false, type: 'timeseries', localtime: false, min: minX * 1000, max: maxX * 1000},
+            y: {show: true, tick: { count: 3, format: d3.format('.1f')}, padding: {top: 20, bottom: 6} }
+          },
+          legend: {
+            show: false
+          },
+          grid: dummy_gridData,
+        });
+
+
       }
 
 
