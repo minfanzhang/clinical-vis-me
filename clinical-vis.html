@@ -1083,6 +1083,74 @@ limitations under the License.
         const dummay_barDiv = dummay_currentCatSelection.append('div').classed('chart-holder', true)
             .append('div').classed('chart-holder-inner-bar', true).classed('chart-holder-inner', true);
         
+        const dummy_buttomClickListener = (e) => {
+          dummy_labsTime = new Date(e.x).toLocaleString('en-US', {timeZone: 'UTC'});
+          dummy_labsTimestamp = new Date(e.x).getTime() / 1000;
+
+          const dummy_x_added = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
+          let dummy_y_added;
+          if (dummy_labsTimestamp === 6727647600) {
+            dummy_y_added = ["Temperature", 37.46, 37.68, 37.57, 37.57];
+          } else {
+            dummy_y_added = ["Temperature", 37.46, 37.30, 37.57, 37.57];
+          }
+          
+
+          const dummy_chart_added = c3.generate({
+            bindto: dummy_chartDiv,
+            data: {
+              x: 'time',
+              xFormat: '%Y-%m-%dT%H:%M:%S.%LZ',
+              columns: [dummy_x_added, dummy_y_added],
+              labels: {
+                format: (v, id, i, j) => +(+v).toFixed(2) + '',
+              },
+              color: dummy_colorSelector,
+            },
+            size: {
+              height: 60,
+            },
+            axis: {
+              x: {show: false, type: 'timeseries', localtime: false, min: minX * 1000, max: maxX * 1000},
+              y: {show: true, tick: { count: 3, format: d3.format('.1f')}, padding: {top: 20, bottom: 6} }
+            },
+            legend: {
+              show: false
+            },
+            grid: dummy_gridData,
+          });
+
+        }
+
+        const dummy_button_times = ["time", 6727647600000, 6727651200000, 6727654800000, 6727658400000];
+        const dummy_button_y = ["notes", 10, 0, 10, 0];
+
+        const dummy_chart_selectButtons = c3.generate({
+          bindto: dummay_barDiv,
+          data: {
+            x: 'time',
+            xFormat: '%Y-%m-%dT%H:%M:%S.%LZ',
+            columns: [dummy_button_times, dummy_button_y],
+            type: 'bar',
+            onclick: dummy_buttomClickListener,
+          },
+          size: {
+            height: 70,
+          },
+          axis: {
+            x: {show:false, type: 'timeseries', localtime: false, min: minX * 1000, max: maxX * 1000},
+            y: {show:false}
+          },
+          legend: {
+            show: false
+          },
+          tooltip: {
+            show: false
+          },
+          bar: {
+            width: 20
+          },
+        });
 
 
       }
