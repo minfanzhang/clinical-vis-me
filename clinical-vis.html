@@ -235,7 +235,7 @@ limitations under the License.
         border-radius: 3px;
         background: rgba(255, 251, 249,0.12);
         box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-        width: 55%;
+        width: 95%;
         min-width: 35%;
         display: inline-block;
         vertical-align: top;
@@ -1038,17 +1038,17 @@ limitations under the License.
 
         const dummy_keyAndChartDiv = dummay_currentCatSelection.append('div').classed(
             'key-and-chart-holder', true);
-        const dummy_chartUnits = this.getKeyUnits("Temperature");
-        const dummy_chartRange = this.getKeyRange("Temperature");
+        const dummy_chartUnits = "bpm";
+        const dummy_chartRange = [36.6, 37];
         const dummy_chartTitleDiv = dummy_keyAndChartDiv.append('div');
-        dummy_chartTitleDiv.classed('key-holder', true).html("Temperature");
+        dummy_chartTitleDiv.classed('key-holder', true).html("Heart Rate");
         dummy_chartTitleDiv.append('span').classed('chart-units', true).classed('lab-units', true).html('(' + dummy_chartUnits + ')');
         const dummy_chartDiv = dummy_keyAndChartDiv.append('div')
                                         .classed('chart-holder', true)
                                         .append('div')
                                         .classed('chart-holder-inner', true);
         const dummy_x = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
-        const dummy_y = ["Temperature", 37.46, 37.34, 37.57, 37.57];
+        const dummy_y = ["Heart Rate", 37.46, 37.34, 37.57, 37.57];
         const dummy_gridData = {y: {show: true}};
         dummy_gridData.y['lines'] = [
           {value: +dummy_chartRange[0], class: 'limit-line'},
@@ -1084,15 +1084,13 @@ limitations under the License.
             .append('div').classed('chart-holder-inner-bar', true).classed('chart-holder-inner', true);
         
         const dummy_buttomClickListener = (e) => {
-          dummy_labsTime = new Date(e.x).toLocaleString('en-US', {timeZone: 'UTC'});
-          dummy_labsTimestamp = new Date(e.x).getTime() / 1000;
-
+          
           const dummy_x_added = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
           let dummy_y_added;
-          if (dummy_labsTimestamp === 6727647600) {
-            dummy_y_added = ["Temperature", 37.46, 37.68, 37.57, 37.57];
+          if (e.x === 0) {
+            dummy_y_added = ["Heart Rate", 37.46, 37.68, 37.57, 37.57];
           } else {
-            dummy_y_added = ["Temperature", 37.46, 37.30, 37.57, 37.57];
+            dummy_y_added = ["Heart Rate", 37.46, 37.30, 37.57, 37.57];
           }
           
 
@@ -1122,24 +1120,32 @@ limitations under the License.
 
         }
 
-        const dummy_button_times = ["time", 6727647600000, 6727651200000, 6727654800000, 6727658400000];
-        const dummy_button_y = ["notes", 10, 0, 10, 0];
 
         const dummy_chart_selectButtons = c3.generate({
           bindto: dummay_barDiv,
           data: {
-            x: 'time',
-            xFormat: '%Y-%m-%dT%H:%M:%S.%LZ',
-            columns: [dummy_button_times, dummy_button_y],
-            type: 'bar',
+            columns: [
+              ['data1', 10, 10, 10, 10, 10, 10]
+            ],
+            types: {
+              data1: 'bar',
+            },
             onclick: dummy_buttomClickListener,
           },
           size: {
-            height: 70,
+            height: 200,
+            width: 200
           },
           axis: {
-            x: {show:false, type: 'timeseries', localtime: false, min: minX * 1000, max: maxX * 1000},
-            y: {show:false}
+            rotated: true,
+            x: {
+              show: true,
+              type: 'category',
+              categories: ['Waveform 1', 'Waveform 2', 'Waveform 3', 'Waveform 4', 'Waveform 5', 'Waveform 6']
+            },
+            y: {
+              show: false
+            }
           },
           legend: {
             show: false
@@ -1153,7 +1159,67 @@ limitations under the License.
         });
 
 
+
+        const dummay_labelSelectorDiv = dummay_currentCatSelection.append('div').classed('chart-holder', true)
+            .append('div').classed('chart-holder-inner-bar', true).classed('chart-holder-inner', true);
+
+
+        const dummy_labelClickListener = (e) => {
+          if (e.x >= 0 && e.x <= 4) {
+            num_label = e.x + 1;
+            dummay_labelPadDiv.html("Note " + num_label + " for this waveform.");
+          } else {
+            dummay_labelPadDiv.html("Not sure about this waveform.");
+          }
+
+        }
+
+        const dummy_chart_selectLabels = c3.generate({
+          bindto: dummay_labelSelectorDiv,
+          data: {
+            columns: [
+              ['labels', 10, 10, 10, 10, 10, 10]
+            ],
+            types: {
+              labels: 'bar',
+            },
+            onclick: dummy_labelClickListener,
+          },
+          size: {
+            height: 60,
+            width: 600
+          },
+          axis: {
+            x: {
+              show: true,
+              type: 'category',
+              categories: ['note 1', 'note 2', 'note 3', 'note 4', 'note 5', 'not sure']
+            },
+            y: {
+              show: false
+            }
+          },
+          legend: {
+            show: false
+          },
+          tooltip: {
+            show: false
+          },
+          bar: {
+            width: 50
+          },
+        });
+
+
+
+        const dummay_labelPadDiv = dummay_currentCatSelection.append('div').classed('chart-holder', true)
+            .append('div').classed('chart-holder-inner-bar', true).classed('chart-holder-inner', true);
+
+        dummay_labelPadDiv.html("This is a note!");
+
+
       }
+
 
 
 
