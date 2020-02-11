@@ -103,6 +103,7 @@ limitations under the License.
         padding: 10px;
       }
       .chart-holder {
+        padding: 20px;
         width: 500px;
         flex-grow: 1;
         padding-bottom: 5px 0px;
@@ -245,7 +246,7 @@ limitations under the License.
         font-weight: 400;
         font-size: 16sp;
         color: #561f06;
-        background: #ffdfd1;
+        background: #ff0000;
         padding: 6px;
       }
       #chartstop {
@@ -348,7 +349,7 @@ limitations under the License.
         </div>
       </div> -->
       <div class="chart-card">
-        <div class="chart-card-heading">Patient Timeline</div>
+        <div class="chart-card-heading">Waveform Visualization & Labelling</div>
         <div id="chartstop"></div>
       </div>
     </div>
@@ -1089,10 +1090,22 @@ limitations under the License.
           let dummy_y_added;
           if (e.x === 0) {
             dummy_y_added = ["Heart Rate", 37.46, 37.68, 37.57, 37.57];
-          } else {
-            dummy_y_added = ["Heart Rate", 37.46, 37.30, 37.57, 37.57];
+          } 
+          else if(e.x === 1) {
+            dummy_y_added = ["Heart Rate", 37.32, 37.68, 37.51, 37.41];
           }
-          
+          else if(e.x === 2) {
+            dummy_y_added = ["Heart Rate", 37.66, 37.54, 37.43, 37.32];
+          }          
+          else if(e.x === 3) {
+            dummy_y_added = ["Heart Rate", 37.45, 37.44, 37.57, 37.39];
+          }
+          else if(e.x === 4) {
+            dummy_y_added = ["Heart Rate", 37.35, 37.45, 37.58, 37.62];
+          }
+          else {
+            dummy_y_added = ["Heart Rate", 37.49, 37.32, 37.68, 37.51];
+          }
 
           const dummy_chart_added = c3.generate({
             bindto: dummy_chartDiv,
@@ -1120,7 +1133,7 @@ limitations under the License.
 
         }
 
-
+        const dummy_colorButtonSelector = (color, d) => '#ff7fc5';
         const dummy_chart_selectButtons = c3.generate({
           bindto: dummay_barDiv,
           data: {
@@ -1130,6 +1143,7 @@ limitations under the License.
             types: {
               data1: 'bar',
             },
+            color: dummy_colorButtonSelector,
             onclick: dummy_buttomClickListener,
           },
           size: {
