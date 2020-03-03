@@ -304,53 +304,6 @@ http://localhost:8081/components/clinical-vis/demo/table-index.html
         font-weight: 400;
       }
     </style>
-    <!--<div class="basic-data">
-      <div class="basic-data-heading">Patient Information</div>
-      <div class="basic-data-pair">
-        <div class="basic-data-key">Name</div>
-        <div class="basic-data-value">[[getFakeName(json.gender)]]</div>
-      </div>
-      <div class="basic-data-pair">
-        <div class="basic-data-key">Age</div>
-        <div class="basic-data-value">[[age]]</div>
-      </div>
-      <div class="basic-data-pair">
-        <div class="basic-data-key">Gender</div>
-        <div class="basic-data-value">[[json.gender]]</div>
-      </div>
-      <div class="basic-data-pair">
-        <div class="basic-data-key">Ethnicity</div>
-        <div class="basic-data-value">[[json.ethnicity]]</div>
-      </div>
-      <div class="basic-data-pair">
-        <div class="basic-data-key">Admitting Diagnosis</div>
-        <div class="basic-data-value">[[json.diagnosis]]</div>
-      </div>
-      <div class="basic-data-pair">
-        <div class="basic-data-key">ICU type</div>
-        <div class="basic-data-value">[[getIcuName(json.icu_type)]]</div>
-      </div>
-    </div>
-    <div class="charts-and-labs">
-      <div id="textarea">
-        <div class="note-card">
-          <div class="note-heading"><span class="heading-label">Selected Note</span> [[noteTime]]</div>
-          <div class="note-text">[[noteText]]</div>
-        </div>
-        <div class="lab-card">
-          <div class="lab-heading"><span class="heading-label">Selected Labs</span> [[labsTime]]</div>
-          <div class="selected-labs">
-            <template is="dom-repeat" items="[[labsList]]">
-              <div class="lab-key-and-value">
-                <div class="lab-key">[[item]]</div>
-                <div class="lab-value">[[getLabValue(item, labsTimestamp)]]</div>
-                <div class="lab-units">[[getKeyUnits(item)]]</div>
-                <div class="lab-sparkline" id$=[[getLabId(item)]]></div>
-              </div>
-            </template>
-          </div>
-        </div>
-      </div> -->
       <div class="chart-card">
         <div class="chart-card-heading">Waveform Visualization & Labelling</div>
         <div id="chartstop"></div>
