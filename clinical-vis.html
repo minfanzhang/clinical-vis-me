@@ -10,6 +10,9 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+http://localhost:8081/components/clinical-vis/demo/index.html
+http://localhost:8081/components/clinical-vis/demo/table-index.html
 -->
 <link rel="import" href="../polymer/polymer.html">
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
@@ -1084,27 +1087,38 @@ limitations under the License.
         const dummay_barDiv = dummay_currentCatSelection.append('div').classed('chart-holder', true)
             .append('div').classed('chart-holder-inner-bar', true).classed('chart-holder-inner', true);
         
+        const selected_stamps_lst = [[], [], [], [], [], []];
         const dummy_buttomClickListener = (e) => {
           
           const dummy_x_added = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
           let dummy_y_added;
           if (e.x === 0) {
-            dummy_y_added = ["Heart Rate", 37.46, 37.68, 37.57, 37.57];
+            dummy_y_added = ["Heart Rate 1", 37.46, 37.68, 37.57, 37.57];
           } 
           else if(e.x === 1) {
-            dummy_y_added = ["Heart Rate", 37.32, 37.68, 37.51, 37.41];
+            dummy_y_added = ["Heart Rate 2", 37.32, 37.68, 37.51, 37.41];
           }
           else if(e.x === 2) {
-            dummy_y_added = ["Heart Rate", 37.66, 37.54, 37.43, 37.32];
+            dummy_y_added = ["Heart Rate 3", 37.66, 37.54, 37.43, 37.32];
           }          
           else if(e.x === 3) {
-            dummy_y_added = ["Heart Rate", 37.45, 37.44, 37.57, 37.39];
+            dummy_y_added = ["Heart Rate 4", 37.45, 37.44, 37.57, 37.39];
           }
           else if(e.x === 4) {
-            dummy_y_added = ["Heart Rate", 37.35, 37.45, 37.58, 37.62];
+            dummy_y_added = ["Heart Rate 5", 37.35, 37.45, 37.58, 37.62];
           }
           else {
-            dummy_y_added = ["Heart Rate", 37.49, 37.32, 37.68, 37.51];
+            dummy_y_added = ["Heart Rate 6", 37.49, 37.32, 37.68, 37.51];
+          }
+
+          const dummy_colorSelector_range = function(color, d) {
+            if (selected_stamps_lst[e.x].includes(d.index)) {
+              return '#db5825';
+            }
+            else {
+              return '#01e925';
+            }
+            
           }
 
           const dummy_chart_added = c3.generate({
@@ -1116,7 +1130,8 @@ limitations under the License.
               labels: {
                 format: (v, id, i, j) => +(+v).toFixed(2) + '',
               },
-              color: dummy_colorSelector,
+              color: dummy_colorSelector_range,
+              onclick: dummy_timeStampClickListener,
             },
             size: {
               height: 60,
@@ -1131,6 +1146,11 @@ limitations under the License.
             grid: dummy_gridData,
           });
 
+        }
+
+        const dummy_timeStampClickListener = (e) => {
+          selected_stamps_lst[parseInt(e.id.split(" ")[2]) - 1].push(e.index)
+          console.log("selected_stamps_lst is ", selected_stamps_lst)
         }
 
         const dummy_colorButtonSelector = (color, d) => '#ff7fc5';
