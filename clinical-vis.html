@@ -528,12 +528,7 @@ http://localhost:8081/components/clinical-vis/demo/table-index.html
         // X limit of the X-axis(hard coded for now)
         minX = 6727651200;
         maxX = 6727730400;
-        console.log("minX is : ", minX);
-        console.log("maxX is : ", maxX);
-        for (note of notes) {
-          minX = Math.min(minX, +note.timestamp);
-          maxX = Math.max(maxX, +note.timestamp);
-        }
+
         // Pad one extra hour to ensure enough space for edge data points and their labels.
         minX -= 60 * 60;
         maxX += 60 * 60;
