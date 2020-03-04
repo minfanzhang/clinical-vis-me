@@ -499,81 +499,6 @@ http://localhost:8081/components/clinical-vis/demo/table-index.html
         this.generate_single_waveform(eventsByCat, json.notes.sort((a, b) => a.timestamp - b.timestamp));
       },
 
-      generateBarChart(timeList, clickListener, label, barLabeler, colorSelector, assigner, minX,
-                        maxX, timeOfPreselectedNote) {
-        const holder = d3.select(this.$.chartstop).append('div').classed('cat-holder', true);
-        const keyAndChartDiv = holder.append('div').classed(
-          'key-and-chart-holder', true);
-        keyAndChartDiv.append('div').classed('bar-key-holder', true).html(label);
-        const barDiv = keyAndChartDiv.append('div').classed('chart-holder', true).append('div')
-            .classed('chart-holder-inner-bar', true).classed('chart-holder-inner', true);
-        const allTimes = {};
-        timeList.sort();
-        timeList.forEach((time, i) => {
-          allTimes[time] = i;
-        });
-        // Add blank entries for times along the time axis to ensure true bars are placed correctly.
-        let curTime = minX;
-        const newTimes = []
-        while (curTime < maxX) {
-          if (timeList.indexOf(curTime) == -1) {
-            newTimes.push(curTime);
-            curTime += 60 * 60;
-          }
-        }
-        let times = Object.keys(allTimes).concat(newTimes).sort();
-        const selectedItem = {x: new Date(timeOfPreselectedNote * 1000),
-                              index: times.indexOf(timeOfPreselectedNote)};
-        let y = times.map((time, i) => {
-          if (allTimes[time] == null) {
-            return 0;
-          }
-          if (timeList.indexOf(time) < 10) {
-            return 10 + (+('.' + timeList.indexOf(time).toString()));
-          } else {
-            return 10 + (+('.0' + timeList.indexOf(time).toString()));
-          }
-          return allTimes[time] == null ? 0 : 10 + (+('.' + timeList.indexOf(time).toString()));
-        });
-        y = ['notes'].concat(y);
-        times = times.map((x) => x * 1000);
-        times = ['time'].concat(times);
-        const chart = c3.generate({
-          bindto: barDiv,
-          data: {
-            x: 'time',
-            xFormat: '%Y-%m-%dT%H:%M:%S.%LZ',
-            columns: [times, y],
-            labels: {
-              format: (v, id, i, j) => barLabeler(v, id, i, j)
-            },
-            color: colorSelector,
-            type: 'bar',
-            onclick: clickListener,
-          },
-          size: {
-            height: 70,
-          },
-          axis: {
-            x: {show:false, type: 'timeseries', localtime: false, min: minX * 1000, max: maxX * 1000},
-            y: {show:false}
-          },
-          legend: {
-            show: false
-          },
-          tooltip: {
-            show: false
-          },
-          bar: {
-            width: 20
-          },
-        });
-        assigner(chart);
-        clickListener(selectedItem);
-      },
-
-
-
       generate_single_waveform(eventsByCat, notes) {
         const allEvents = []
         minX = Number.MAX_VALUE;
@@ -599,32 +524,12 @@ http://localhost:8081/components/clinical-vis/demo/table-index.html
           'Creatinine': 5,
           'Glucose': 6,
         };
-        for (cat in eventsByCat) {
-          let keys = Object.keys(eventsByCat[cat]);
-          if (cat == 'Vitals') {
-            keys = keys.sort((a, b) => {
-              if (a in vitalsOrdering && b in vitalsOrdering) {
-                return vitalsOrdering[a] - vitalsOrdering[b];
-              }
-              if (a in vitalsOrdering) {
-                return -1;
-              }
-              if (b in vitalsOrdering) {
-                return 1;
-              }
-              else {
-                return a - b;
-              }});
-          }
-          for (key of keys) {
-            if (cat == 'Vitals') {
-              allEvents.push({key: key, category: cat, events: eventsByCat[cat][key]});
-            }
-            const times = Object.keys(eventsByCat[cat][key]).map((time) => eventsByCat[cat][key][time].timestamp)
-            minX = Math.min(minX, ...times);
-            maxX = Math.max(maxX, ...times);
-          }
-        }
+        
+        // X limit of the X-axis(hard coded for now)
+        minX = 6727651200;
+        maxX = 6727730400;
+        console.log("minX is : ", minX);
+        console.log("maxX is : ", maxX);
         for (note of notes) {
           minX = Math.min(minX, +note.timestamp);
           maxX = Math.max(maxX, +note.timestamp);
