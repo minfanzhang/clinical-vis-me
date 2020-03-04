@@ -383,82 +383,8 @@ http://localhost:8081/components/clinical-vis/demo/table-index.html
         }
         return event.value;
       },
-      getLabValue: function(key, timestamp) {
-        for (const lab of this.labResultsByTimestamp[timestamp]) {
-          if (lab.key == key) {
-            return +(parseFloat(lab.value).toFixed(3));
-          }
-        }
-        return '-';
-      },
       getKeyUnits: function(key) {
         return unitData[key] && unitData[key].units ? unitData[key].units : null;
-      },
-      getLabId: function(key) {
-        requestAnimationFrame(() => this.drawSparkline(key));
-        return key.replace(/\s/g,'');
-      },
-      drawSparkline: function(key) {
-        const times = [];
-        const data = [];
-        let selectedIndex = -1;
-        for (let time of Object.keys(this.labResultsByTimestamp).sort()) {
-          for (const lab of this.labResultsByTimestamp[time]) {
-            if (lab.key == key && lab.value != null) {
-              data.push(lab.value);
-              times.push(time * 1000);
-              if (time == this.labsTimestamp) {
-                selectedIndex = data.length - 1;
-              }
-              break;
-            }
-          }
-        }
-        const printableKey = key.length < 10 ? key : key.substring(0, 8) + '...';
-        const isFirstLabInList = this.labsList.indexOf(key) == 0;
-        const tooltipTop = isFirstLabInList ? 30 : -60;
-        const chartRange = this.getKeyRange(key);
-        const gridData = {y: {show: false}};
-          if (chartRange != null) {
-            gridData.y['lines'] = [
-              {value: +chartRange[0], class: 'lab-limit-line'},
-              {value: +chartRange[1], class: 'lab-limit-line'},
-            ];
-          }
-        const chart = c3.generate({
-          bindto: '#' + key.replace(/\s/g,''),
-          data: {
-            x: 'time',
-            columns: [
-              ['time'].concat(times),
-              [printableKey].concat(data)
-            ],
-            color: function (color, d) {
-              return d.index == selectedIndex ? "#007696" : "#95c1c9";
-            }
-          },
-          legend: {
-            show: false
-          },
-          tooltip:{
-            show: true,
-            position: function (data, width, height, element) {
-              return {top: tooltipTop, left: 0};
-            },
-          },
-          axis: {
-            x: {show: false, type: 'timeseries', localtime: false, min: this.minX * 1000, max: this.maxX * 1000},
-            y: {show: false}
-          },
-          size: {
-            height: 40,
-            width: 120
-          },
-          point: {
-            show: true
-          },
-          grid: gridData,
-        });
       },
       getKeyRange: function(key) {
         return unitData[key] && unitData[key].low ? [unitData[key].low, unitData[key].high] : null;
@@ -500,30 +426,8 @@ http://localhost:8081/components/clinical-vis/demo/table-index.html
       },
 
       generate_single_waveform(eventsByCat, notes) {
-        const allEvents = []
         minX = Number.MAX_VALUE;
         maxX = 0;
-        const vitalsOrdering = {
-          'Temperature': 0,
-          'Heart Rate': 1,
-          'Systolic blood pressure': 2,
-          'Diastolic blood pressure': 3,
-          'Mean blood pressure': 4,
-          'Respiratory rate': 5,
-          'Oxygen saturation': 6,
-          'Urine output': 7,
-          'Weight': 8,
-          'Glascow coma scale': 9,
-        };
-        const labOrdering = {
-          'Sodium': 0,
-          'Potassium': 1,
-          'Chloride': 2,
-          'Bicarbonate': 3,
-          'Blood urea nitrogen': 4,
-          'Creatinine': 5,
-          'Glucose': 6,
-        };
         
         // X limit of the X-axis(hard coded for now)
         minX = 6727651200;
@@ -534,22 +438,7 @@ http://localhost:8081/components/clinical-vis/demo/table-index.html
         maxX += 60 * 60;
         this.minX = minX;
         this.maxX = maxX;
-        this.labResultsByTimestamp = {}
         const labKeys = [];
-        for (key in eventsByCat['Labs']) {
-          labKeys.push(key);
-          for (timestamp in eventsByCat['Labs'][key]) {
-            lab_bar_timestamp = timestamp - (timestamp % (60 * 60));
-            if (!(lab_bar_timestamp in this.labResultsByTimestamp)) {
-              this.labResultsByTimestamp[lab_bar_timestamp] = [];
-            }
-            this.labResultsByTimestamp[lab_bar_timestamp].push({
-              key: key,
-              value: 'value_num' in eventsByCat['Labs'][key][timestamp] ?
-                  eventsByCat['Labs'][key][timestamp].value_num :
-                  eventsByCat['Labs'][key][timestamp].value_str});
-          }
-        }
         this.labsList = labKeys;
         const holder = d3.select(this.$.chartstop)
         let currentCat = '';
