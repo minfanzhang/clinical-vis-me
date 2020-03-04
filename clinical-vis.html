@@ -239,7 +239,7 @@ http://localhost:8081/components/clinical-vis/demo/table-index.html
         border-radius: 3px;
         background: rgba(255, 251, 249,0.12);
         box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-        width: 95%;
+        width: 99%;
         min-width: 35%;
         display: inline-block;
         vertical-align: top;
@@ -438,19 +438,12 @@ http://localhost:8081/components/clinical-vis/demo/table-index.html
         maxX += 60 * 60;
         this.minX = minX;
         this.maxX = maxX;
-        const labKeys = [];
-        this.labsList = labKeys;
         const holder = d3.select(this.$.chartstop)
-        let currentCat = '';
-        let currentCatSelection = null;
-        const xAxisWidth = holder.node().getBoundingClientRect().width - 190 - 40;
+
+        const xAxisWidth = holder.node().getBoundingClientRect().width;
         const xAxisHeight = 20;
-        const xAxisVis = holder.append("svg:svg")
-                               .attr('class', 'xaxis-holder')
-                               .attr("width", xAxisWidth)
-                               .attr("height", xAxisHeight)
-                               .attr('overflow', 'visible');
-        const offsetToUTC = new Date(minX * 1000).getTimezoneOffset() * 60;
+
+        const offsetToUTC = new Date(minX * 1000).getTimezoneOffset() * 60; // 14400
         const xScale = d3.time.scale()
                           .domain([new Date((minX + offsetToUTC) * 1000), new Date((maxX + offsetToUTC) * 1000)])
                           .rangeRound([0, xAxisWidth]);
@@ -459,12 +452,12 @@ http://localhost:8081/components/clinical-vis/demo/table-index.html
                             .scale(xScale);
 
 
-
+        // Initial generation of the UI
         dummay_currentCat = "dummy_Vitals";
         dummay_currentCatSelection = holder.append('div').classed('cat-holder', true);
         const dummy_vitalsHeadingHolder = dummay_currentCatSelection.append('div');
         dummy_vitalsHeadingHolder.classed('vitals-top-holder', true);
-        dummy_vitalsHeadingHolder.append('div').classed('cat-holder-inner', true).html("dummy_Vitals");
+        dummy_vitalsHeadingHolder.append('div').classed('cat-holder-inner', true).html("Time");
         const dummy_xAxisVis = dummy_vitalsHeadingHolder.append("svg:svg")
                                .attr('class', 'vitals-axis-holder')
                                .attr("width", xAxisWidth)
@@ -519,10 +512,15 @@ http://localhost:8081/components/clinical-vis/demo/table-index.html
           grid: dummy_gridData,
         });
 
-        const dummay_barDiv = dummay_currentCatSelection.append('div').classed('chart-holder', true)
-            .append('div').classed('chart-holder-inner-bar', true).classed('chart-holder-inner', true);
+        // End of initial generation
         
         const selected_stamps_lst = [[], [], [], [], [], []];
+
+        const dummy_timeStampClickListener = (e) => {
+          selected_stamps_lst[parseInt(e.id.split(" ")[2]) - 1].push(e.index)
+          console.log("selected_stamps_lst is ", selected_stamps_lst)
+        }
+
         const dummy_buttomClickListener = (e) => {
           
           const dummy_x_added = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
@@ -583,10 +581,8 @@ http://localhost:8081/components/clinical-vis/demo/table-index.html
 
         }
 
-        const dummy_timeStampClickListener = (e) => {
-          selected_stamps_lst[parseInt(e.id.split(" ")[2]) - 1].push(e.index)
-          console.log("selected_stamps_lst is ", selected_stamps_lst)
-        }
+        const dummay_barDiv = dummay_currentCatSelection.append('div').classed('chart-holder', true)
+            .append('div').classed('chart-holder-inner-bar', true).classed('chart-holder-inner', true);
 
         const dummy_colorButtonSelector = (color, d) => '#ff7fc5';
         const dummy_chart_selectButtons = c3.generate({
@@ -686,8 +682,14 @@ http://localhost:8081/components/clinical-vis/demo/table-index.html
 
         dummay_labelPadDiv.html("This is a note!");
 
+        // All click listeners
+
+
+
 
       }
+
+
 
 
 
