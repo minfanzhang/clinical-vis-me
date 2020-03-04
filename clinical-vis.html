@@ -400,49 +400,28 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
       getKeyRange: function(key) {
         return unitData[key] && unitData[key].low ? [unitData[key].low, unitData[key].high] : null;
       },
+      ListTimes: function(list, factor){
+        let ret_list = []
+        for (var i = 0; i < list.length; i++) {
+          ret_list.push(list[i] * factor)
+        }
+        return ret_list
+      },
       jsonChanged: function(json) {
         this.$.chartstop.innerHTML = '';
-        const dob = new Date(json.dob)
-        const firstEntryDate = new Date(+json.events[0].timestamp * 1000);
-        const diff = firstEntryDate.getTime() - dob.getTime();
-        this.age = Math.floor(diff / (1000*60*60*24*365.25));
-        json.events.forEach((item) => {
-          if (!item['category']) {
-            item['category'] = 'Other';
-          }
-        });
-        timestamps = json.events.map(event => event['timestamp']).sort();
-        timestamps = timestamps.filter((item, pos) => pos == 0 || item != timestamps[pos - 1]);
-        categories = json.events.map(event => event['category']).sort();
-        categories = categories.filter((item, pos) => pos == 0 || item != categories[pos - 1]);
-        eventsByCat = {}
-        categories.forEach((cat) => eventsByCat[cat] = {});
-        for (var cat in eventsByCat) {
-          if (cat == 'Other') {
-            continue;
-          }
-          keys = json.events.filter((item) => item['category'] == cat).map((item) => item['key']).sort();
-          keys = keys.filter((item, pos) => pos == 0 || item != keys[pos - 1]);
-          for (key of keys) {
-            const timeToEvents = {}
-            events = json.events.filter((item) => item['category'] == cat).filter((item) => item['key'] == key);
-            for (event of events) {
-              timeToEvents[event['timestamp']] = event;
-            }
-            eventsByCat[cat][key] = timeToEvents;
-          }
-        }
-        //this.generateCharts(eventsByCat, json.notes.sort((a, b) => a.timestamp - b.timestamp));
-        this.generate_single_waveform(eventsByCat, json.notes.sort((a, b) => a.timestamp - b.timestamp));
+        this.generate_single_waveform(json.times, json.values);
       },
 
-      generate_single_waveform(eventsByCat, notes) {
+      generate_single_waveform(Raw_X, Raw_Y) {
         minX = Number.MAX_VALUE;
         maxX = 0;
         
+        // Times every value in the list by 1000
+        console.log("Tiems is ", this.ListTimes(Raw_X, 1000))
+        
         // X limit of the X-axis(hard coded for now)
-        minX = 6727651200;
-        maxX = 6727730400;
+        minX = Raw_X[0];
+        maxX = Raw_X[Raw_X.length - 1];
 
         // Pad one extra hour to ensure enough space for edge data points and their labels.
         minX -= 60 * 60;
@@ -482,7 +461,7 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         const dummy_keyAndChartDiv = dummay_currentCatSelection.append('div').classed(
             'key-and-chart-holder', true);
         const dummy_chartUnits = "bpm";
-        const dummy_chartRange = [36.6, 37];
+        const dummy_chartRange = [7900, 8250];
         const dummy_chartTitleDiv = dummy_keyAndChartDiv.append('div');
         dummy_chartTitleDiv.classed('key-holder', true).html("Heart Rate");
         dummy_chartTitleDiv.append('span').classed('chart-units', true).classed('lab-units', true).html('(' + dummy_chartUnits + ')');
@@ -490,8 +469,12 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
                                         .classed('chart-holder', true)
                                         .append('div')
                                         .classed('chart-holder-inner', true);
-        const dummy_x = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
-        const dummy_y = ["Heart Rate", 37.46, 37.34, 37.57, 37.57];
+        //const dummy_x = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
+        //const dummy_y = ["Heart Rate", 37.46, 37.34, 37.57, 37.57];
+        const dummy_x = ["time"].concat(Raw_X);
+        const dummy_y = ["Heart Rate"].concat(Raw_Y);
+        console.log("dummy_x is ", dummy_x)
+        console.log("dummy_y is ", dummy_y)
         const dummy_gridData = {y: {show: true}};
         dummy_gridData.y['lines'] = [
           {value: +dummy_chartRange[0], class: 'limit-line'},
@@ -506,7 +489,7 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
             xFormat: '%Y-%m-%dT%H:%M:%S.%LZ',
             columns: [dummy_x, dummy_y],
             labels: {
-              format: (v, id, i, j) => +(+v).toFixed(2) + '',
+              format: (v, id, i, j) => +(+v).toFixed(0) + '',
             },
             color: dummy_colorSelector,
           },
