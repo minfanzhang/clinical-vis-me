@@ -416,9 +416,6 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         minX = Number.MAX_VALUE;
         maxX = 0;
         
-        // Times every value in the list by 1000
-        console.log("Tiems is ", this.ListTimes(Raw_X, 1000))
-        
         // X limit of the X-axis(hard coded for now)
         minX = Raw_X[0];
         maxX = Raw_X[Raw_X.length - 1];
@@ -435,8 +432,9 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
 
         const offsetToUTC = new Date(minX * 1000).getTimezoneOffset() * 60; // 14400
         const xScale = d3.time.scale()
-                          .domain([new Date((minX + offsetToUTC) * 1000), new Date((maxX + offsetToUTC) * 1000)])
+                          .domain([minX * 1000, maxX * 1000])
                           .rangeRound([0, xAxisWidth]);
+        
         const xAxis = d3.svg.axis()
                             .orient('top')
                             .scale(xScale);
@@ -456,7 +454,7 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         dummy_xAxisVis.append("g")
                 .attr("class", "xaxis")
                 .attr("transform", "translate(0," + xAxisHeight + ")")
-                .call(xAxis.tickFormat(d3.timeFormat("%I %p")).tickSize(-10));
+                .call(xAxis.tickFormat(d3.timeFormat(".%L")).tickSize(-10));
 
         const dummy_keyAndChartDiv = dummay_currentCatSelection.append('div').classed(
             'key-and-chart-holder', true);
@@ -471,10 +469,9 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
                                         .classed('chart-holder-inner', true);
         //const dummy_x = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
         //const dummy_y = ["Heart Rate", 37.46, 37.34, 37.57, 37.57];
-        const dummy_x = ["time"].concat(Raw_X);
+        const dummy_x = ["time"].concat(this.ListTimes(Raw_X, 1000));
         const dummy_y = ["Heart Rate"].concat(Raw_Y);
         console.log("dummy_x is ", dummy_x)
-        console.log("dummy_y is ", dummy_y)
         const dummy_gridData = {y: {show: true}};
         dummy_gridData.y['lines'] = [
           {value: +dummy_chartRange[0], class: 'limit-line'},
@@ -489,7 +486,7 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
             xFormat: '%Y-%m-%dT%H:%M:%S.%LZ',
             columns: [dummy_x, dummy_y],
             labels: {
-              format: (v, id, i, j) => +(+v).toFixed(0) + '',
+              format: (v, id, i, j) => +(+v).toFixed(2) + '',
             },
             color: dummy_colorSelector,
           },
