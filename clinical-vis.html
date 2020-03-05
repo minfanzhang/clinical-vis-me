@@ -510,8 +510,7 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         const selected_stamps_lst = [[], [], [], [], [], []];
 
         const dummy_timeStampClickListener = (e) => {
-          console.log("e is ", e)
-          selected_stamps_lst[0].push(e.index)
+          selected_stamps_lst[parseInt(e.id.split(" ")[2]) - 1].push(e.index)
           console.log("selected_stamps_lst is ", selected_stamps_lst)
         }
 
