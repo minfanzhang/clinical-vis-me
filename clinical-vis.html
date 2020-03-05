@@ -473,7 +473,6 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         const dummy_y = ["Heart Rate", 37.46, 37.34, 37.57, 37.57];
         //const dummy_x = ["time"].concat(this.ListTimes(Raw_X, 1000));
         //const dummy_y = ["Heart Rate"].concat(Raw_Y);
-        console.log("dummy_x is ", dummy_x)
         const dummy_gridData = {y: {show: true}};
         dummy_gridData.y['lines'] = [
           {value: +dummy_chartRange[0], class: 'limit-line'},
@@ -541,7 +540,8 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
           }
 
           const dummy_colorSelector_range = function(color, d) {
-            if (selected_stamps_lst[e.x].includes(d.index)) {
+            if (selected_stamps_lst[e.x].length === 2 && d.index >= selected_stamps_lst[e.x][0] 
+                && d.index <= selected_stamps_lst[e.x][1]) {
               return '#db5825';
             }
             else {
@@ -557,7 +557,13 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
               xFormat: '%Y-%m-%dT%H:%M:%S.%LZ',
               columns: [dummy_x_added, dummy_y_added],
               labels: {
-                format: (v, id, i, j) => +(+v).toFixed(2) + '',
+                format: function (v, id, i, j) {
+                  if (selected_stamps_lst[e.x].includes(i)) {
+                    return +(+v).toFixed(2) + ''
+                  } else {
+                    return ''
+                  }
+                },
               },
               color: dummy_colorSelector_range,
               onclick: dummy_timeStampClickListener,
