@@ -417,14 +417,14 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         maxX = 0;
         
         // X limit of the X-axis(hard coded for now)
-        //minX = Raw_X[0];
-        //maxX = Raw_X[Raw_X.length - 1];
-        minX = 6727662000;
-        maxX = 6727692600;
+        minX = Raw_X[0];
+        maxX = Raw_X[Raw_X.length - 1];
+        //minX = 6727662000;
+        //maxX = 6727692600;
 
         // Pad one extra hour to ensure enough space for edge data points and their labels.
-        minX -= 60 * 60;
-        maxX += 60 * 60;
+        //minX -= 60 * 60;
+        //maxX += 60 * 60;
         this.minX = minX;
         this.maxX = maxX;
         const holder = d3.select(this.$.chartstop)
@@ -434,7 +434,7 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
 
         const offsetToUTC = new Date(minX * 1000).getTimezoneOffset() * 60; // 14400
         const xScale = d3.time.scale()
-                          .domain([minX * 1000, maxX * 1000])
+                          .domain([new Date((minX + offsetToUTC) * 1000), new Date((maxX + offsetToUTC) * 1000)])
                           .rangeRound([0, xAxisWidth]);
         
         const xAxis = d3.svg.axis()
@@ -456,7 +456,7 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         dummy_xAxisVis.append("g")
                 .attr("class", "xaxis")
                 .attr("transform", "translate(0," + xAxisHeight + ")")
-                .call(xAxis.tickFormat(d3.timeFormat("%I %p")).tickSize(-10));
+                .call(xAxis.tickFormat(d3.timeFormat("%S:%L")).tickSize(-10));
 
         const dummy_keyAndChartDiv = dummay_currentCatSelection.append('div').classed(
             'key-and-chart-holder', true);
