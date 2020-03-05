@@ -417,8 +417,10 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         maxX = 0;
         
         // X limit of the X-axis(hard coded for now)
-        minX = Raw_X[0];
-        maxX = Raw_X[Raw_X.length - 1];
+        //minX = Raw_X[0];
+        //maxX = Raw_X[Raw_X.length - 1];
+        minX = 6727662000;
+        maxX = 6727692600;
 
         // Pad one extra hour to ensure enough space for edge data points and their labels.
         minX -= 60 * 60;
@@ -454,7 +456,7 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         dummy_xAxisVis.append("g")
                 .attr("class", "xaxis")
                 .attr("transform", "translate(0," + xAxisHeight + ")")
-                .call(xAxis.tickFormat(d3.timeFormat(".%L")).tickSize(-10));
+                .call(xAxis.tickFormat(d3.timeFormat("%I %p")).tickSize(-10));
 
         const dummy_keyAndChartDiv = dummay_currentCatSelection.append('div').classed(
             'key-and-chart-holder', true);
@@ -467,10 +469,10 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
                                         .classed('chart-holder', true)
                                         .append('div')
                                         .classed('chart-holder-inner', true);
-        //const dummy_x = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
-        //const dummy_y = ["Heart Rate", 37.46, 37.34, 37.57, 37.57];
-        const dummy_x = ["time"].concat(this.ListTimes(Raw_X, 1000));
-        const dummy_y = ["Heart Rate"].concat(Raw_Y);
+        const dummy_x = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
+        const dummy_y = ["Heart Rate", 37.46, 37.34, 37.57, 37.57];
+        //const dummy_x = ["time"].concat(this.ListTimes(Raw_X, 1000));
+        //const dummy_y = ["Heart Rate"].concat(Raw_Y);
         console.log("dummy_x is ", dummy_x)
         const dummy_gridData = {y: {show: true}};
         dummy_gridData.y['lines'] = [
@@ -508,16 +510,20 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         const selected_stamps_lst = [[], [], [], [], [], []];
 
         const dummy_timeStampClickListener = (e) => {
-          selected_stamps_lst[parseInt(e.id.split(" ")[2]) - 1].push(e.index)
+          console.log("e is ", e)
+          selected_stamps_lst[0].push(e.index)
           console.log("selected_stamps_lst is ", selected_stamps_lst)
         }
 
         const dummy_buttomClickListener = (e) => {
           
-          const dummy_x_added = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
+          //const dummy_x_added = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
+          maxX_curr_wave = Raw_X[Raw_X.length - 1];
+          minX_curr_wave = Raw_X[0];
+          const dummy_x_added = ["time"].concat(this.ListTimes(Raw_X, 1000));
           let dummy_y_added;
           if (e.x === 0) {
-            dummy_y_added = ["Heart Rate 1", 37.46, 37.68, 37.57, 37.57];
+            dummy_y_added = ["Heart Rate 1"].concat(Raw_Y);
           } 
           else if(e.x === 1) {
             dummy_y_added = ["Heart Rate 2", 37.32, 37.68, 37.51, 37.41];
@@ -561,7 +567,8 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
               height: 60,
             },
             axis: {
-              x: {show: false, type: 'timeseries', localtime: false, min: minX * 1000, max: maxX * 1000},
+              x: {show: false, type: 'timeseries', localtime: false,
+               min: minX_curr_wave * 1000, max: maxX_curr_wave * 1000},
               y: {show: true, tick: { count: 3, format: d3.format('.1f')}, padding: {top: 20, bottom: 6} }
             },
             legend: {
