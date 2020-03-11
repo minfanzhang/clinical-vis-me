@@ -483,6 +483,19 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
                 .attr("width", xAxisWidth)
                 .attr("height", xAxisHeight)
                 .attr('overflow', 'auto');
+
+        // Generate the key and chart division for the second chart
+        const zoomkeyAndChartDiv = dummay_currentCatSelection.append('div').classed(
+            'key-and-chart-holder', true);
+        const zoomchartUnits = "bpm";
+        const zoomchartRange = [7900, 8250];
+        const zoomchartTitleDiv = zoomkeyAndChartDiv.append('div');
+        zoomchartTitleDiv.classed('key-holder', true).html("Heart Rate");
+        zoomchartTitleDiv.append('span').classed('chart-units', true).classed('lab-units', true).html('(' + zoomchartUnits + ')');
+        const zoomchartDiv = zoomkeyAndChartDiv.append('div')
+                                        .classed('chart-holder', true)
+                                        .append('div')
+                                        .classed('chart-holder-inner', true);
     
         const dummy_x = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
         const dummy_y = ["Heart Rate", 37.46, 37.34, 37.57, 37.57];
@@ -597,6 +610,7 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
             grid: dummy_gridData,
           });
 
+          //Adjust the zoom in time scale(heading)
           if (selected_stamps_lst[e.x].length === 2) {
             console.log("Entered the loop!")
             minX_Zoom = dummy_x_added[selected_stamps_lst[e.x][0]] / 1000;
@@ -618,9 +632,50 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
                       .attr("transform", "translate(0," + xAxisHeight + ")")
                       .call(xAxis_Zoom.tickFormat(d3.timeFormat("%S:%L")).tickSize(-10));
 
+            // Generate the contents of the second(zoom in) chart
+            maxX_zoom_wave = Raw_X[selected_stamps_lst[e.x][1]];
+            minX_zoom_wave = Raw_X[selected_stamps_lst[e.x][0]];
+            const zoom_x_added = ["time"].concat(this.ListTimes(Raw_X.slice(selected_stamps_lst[e.x][0],
+             selected_stamps_lst[e.x][1] + 1), 1000));
+            let zoom_y_added;
+            if (e.x === 0) {
+              zoom_y_added = ["Heart Rate 1 - Zoom"].concat(Raw_Y.slice(selected_stamps_lst[e.x][0],
+                selected_stamps_lst[e.x][1] + 1));
+            }
+
+            const zoom_chart_added = c3.generate({
+              bindto: zoomchartDiv,
+              data: {
+                x: 'time',
+                xFormat: '%Y-%m-%dT%H:%M:%S.%LZ',
+                columns: [zoom_x_added, zoom_y_added],
+                labels: {
+                  format: function (v, id, i, j) {
+                    if (selected_stamps_lst[e.x].includes(i)) {
+                      return ''
+                    } else {
+                      return ''
+                    }
+                  },
+                },
+                color: dummy_colorSelector_range,
+              },
+              size: {
+                height: 60,
+              },
+              axis: {
+                x: {show: false, type: 'timeseries', localtime: false,
+                min: minX_zoom_wave * 1000, max: maxX_zoom_wave * 1000},
+                y: {show: true, tick: { count: 3, format: d3.format('.1f')}, padding: {top: 20, bottom: 6} }
+              },
+              legend: {
+                show: false
+              },
+              grid: dummy_gridData,
+            });
             
           } else {
-            //Adjust the zoom in time scale
+            
             zoomChartxAxisVis.append("g")
                       .attr("class", "xaxis")
                       .attr("transform", "translate(0," + xAxisHeight + ")")
