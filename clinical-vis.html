@@ -445,6 +445,8 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         // Initial generation of the UI
         dummay_currentCat = "dummy_Vitals";
         dummay_currentCatSelection = holder.append('div').classed('cat-holder', true);
+
+        // Generate the heading division for the first chart
         const dummy_vitalsHeadingHolder = dummay_currentCatSelection.append('div');
         dummy_vitalsHeadingHolder.classed('vitals-top-holder', true);
         dummy_vitalsHeadingHolder.append('div').classed('cat-holder-inner', true).html("Time");
@@ -457,7 +459,8 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
                 .attr("class", "xaxis")
                 .attr("transform", "translate(0," + xAxisHeight + ")")
                 .call(xAxis.tickFormat(d3.timeFormat("%S:%L")).tickSize(-10));
-
+        
+        // Generate the key and chart division for the first chart
         const dummy_keyAndChartDiv = dummay_currentCatSelection.append('div').classed(
             'key-and-chart-holder', true);
         const dummy_chartUnits = "bpm";
@@ -469,6 +472,18 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
                                         .classed('chart-holder', true)
                                         .append('div')
                                         .classed('chart-holder-inner', true);
+
+        // Generate the heading division for the second chart
+        zoomChartHeadingHolder = dummay_currentCatSelection.append('div');
+        zoomChartHeadingHolder.classed('vitals-top-holder', true);
+        zoomChartHeadingHolder.append('div').classed('cat-holder-inner', true).html("Time(Zoom in)");
+
+        zoomChartxAxisVis = zoomChartHeadingHolder.append("svg:svg")
+                .attr('class', 'vitals-axis-holder')
+                .attr("width", xAxisWidth)
+                .attr("height", xAxisHeight)
+                .attr('overflow', 'auto');
+    
         const dummy_x = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
         const dummy_y = ["Heart Rate", 37.46, 37.34, 37.57, 37.57];
         //const dummy_x = ["time"].concat(this.ListTimes(Raw_X, 1000));
@@ -581,6 +596,36 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
             },
             grid: dummy_gridData,
           });
+
+          if (selected_stamps_lst[e.x].length === 2) {
+            console.log("Entered the loop!")
+            minX_Zoom = dummy_x_added[selected_stamps_lst[e.x][0]] / 1000;
+            maxX_Zoom = dummy_x_added[selected_stamps_lst[e.x][1]] / 1000;
+
+            const offsetToUTC_Zoom = new Date(minX_Zoom * 1000).getTimezoneOffset() * 60; 
+            const xScale_Zoom = d3.time.scale()
+                              .domain([new Date((minX_Zoom + offsetToUTC_Zoom) * 1000), 
+                                      new Date((maxX_Zoom + offsetToUTC_Zoom) * 1000)])
+                              .rangeRound([0, xAxisWidth]);
+            
+            const xAxis_Zoom = d3.svg.axis()
+                                .orient('top')
+                                .scale(xScale_Zoom);
+            
+            zoomChartxAxisVis.selectAll("*").remove()
+            zoomChartxAxisVis.append("g")
+                      .attr("class", "xaxis")
+                      .attr("transform", "translate(0," + xAxisHeight + ")")
+                      .call(xAxis_Zoom.tickFormat(d3.timeFormat("%S:%L")).tickSize(-10));
+
+            
+          } else {
+            //Adjust the zoom in time scale
+            zoomChartxAxisVis.append("g")
+                      .attr("class", "xaxis")
+                      .attr("transform", "translate(0," + xAxisHeight + ")")
+                      .call(xAxis.tickFormat(d3.timeFormat("%S:%L")).tickSize(-10));
+          }
 
         }
 
