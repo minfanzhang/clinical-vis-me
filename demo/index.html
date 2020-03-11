@@ -33,9 +33,12 @@ limitations under the License.
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../clinical-vis.html">
     <script>
-      d3.json('fake_measures.json', (data) => {
+      $.getJSON('http://lore-api.sickkids.ca/api/data?patient=2652477&starttime=1458027623&endtime=1458027627&measure=157', function(data) {
         document.querySelector("#vis").json = data;
       });
+      /*d3.json('fake_measures.json', (data) => {
+        document.querySelector("#vis").json = data;
+      });*/
     </script>
   </head>
   <body>
