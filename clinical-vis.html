@@ -409,10 +409,15 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
       },
       jsonChanged: function(json) {
         this.$.chartstop.innerHTML = '';
+        console.log("json is ", json)
         this.generate_single_waveform(json.times, json.values);
       },
 
       generate_single_waveform(Raw_X, Raw_Y) {
+        console.log("Raw_X has type : ", typeof Raw_X)
+        console.log("Raw_X is : ", Raw_X)  
+        //parsed_raw_x = JSON.parse(Raw_X);
+        //console.log("rarsed Raw_X has type : ", parsed_raw_x)
         minX = Number.MAX_VALUE;
         maxX = 0;
         
@@ -533,6 +538,7 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         });
 
         // End of initial generation
+
         
         const selected_stamps_lst = [[], [], [], [], [], []];
 
