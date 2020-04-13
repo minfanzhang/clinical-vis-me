@@ -454,7 +454,7 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         // Generate the heading division for the first chart
         const dummy_vitalsHeadingHolder = dummay_currentCatSelection.append('div');
         dummy_vitalsHeadingHolder.classed('vitals-top-holder', true);
-        dummy_vitalsHeadingHolder.append('div').classed('cat-holder-inner', true).html("Time");
+        dummy_vitalsHeadingHolder.append('div').classed('cat-holder-inner', true).html("Urine Output");
         const dummy_xAxisVis = dummy_vitalsHeadingHolder.append("svg:svg")
                                .attr('class', 'vitals-axis-holder')
                                .attr("width", xAxisWidth)
@@ -468,10 +468,10 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         // Generate the key and chart division for the first chart
         const dummy_keyAndChartDiv = dummay_currentCatSelection.append('div').classed(
             'key-and-chart-holder', true);
-        const dummy_chartUnits = "bpm";
-        const dummy_chartRange = [7900, 8250];
+        const dummy_chartUnits = "cc/hour";
+        const dummy_chartRange = [300, 1000];
         const dummy_chartTitleDiv = dummy_keyAndChartDiv.append('div');
-        dummy_chartTitleDiv.classed('key-holder', true).html("Heart Rate");
+        dummy_chartTitleDiv.classed('key-holder', true).html("Urine Output");
         dummy_chartTitleDiv.append('span').classed('chart-units', true).classed('lab-units', true).html('(' + dummy_chartUnits + ')');
         const dummy_chartDiv = dummy_keyAndChartDiv.append('div')
                                         .classed('chart-holder', true)
@@ -481,7 +481,7 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         // Generate the heading division for the second chart
         zoomChartHeadingHolder = dummay_currentCatSelection.append('div');
         zoomChartHeadingHolder.classed('vitals-top-holder', true);
-        zoomChartHeadingHolder.append('div').classed('cat-holder-inner', true).html("Time(Zoom in)");
+        zoomChartHeadingHolder.append('div').classed('cat-holder-inner', true).html("Blood Pressure");
 
         zoomChartxAxisVis = zoomChartHeadingHolder.append("svg:svg")
                 .attr('class', 'vitals-axis-holder')
@@ -493,9 +493,9 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         const zoomkeyAndChartDiv = dummay_currentCatSelection.append('div').classed(
             'key-and-chart-holder', true);
         const zoomchartUnits = "bpm";
-        const zoomchartRange = [7900, 8250];
+        const zoomchartRange = [300, 1000];
         const zoomchartTitleDiv = zoomkeyAndChartDiv.append('div');
-        zoomchartTitleDiv.classed('key-holder', true).html("Heart Rate");
+        zoomchartTitleDiv.classed('key-holder', true).html("Blood Pressure");
         zoomchartTitleDiv.append('span').classed('chart-units', true).classed('lab-units', true).html('(' + zoomchartUnits + ')');
         const zoomchartDiv = zoomkeyAndChartDiv.append('div')
                                         .classed('chart-holder', true)
