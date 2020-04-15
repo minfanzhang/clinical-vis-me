@@ -608,15 +608,95 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
 
         // End of initial generation
 
-        
-        const selected_stamps_lst = [[], [], [], [], [], []];
+        const dummy_buttomClickListener = (e) => {
+          
+          //const dummy_x_added = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
+          maxX_curr_wave = Raw_X[Raw_X.length - 1];
+          minX_curr_wave = Raw_X[0];
+          const dummy_x_added = ["time"].concat(this.ListTimes(Raw_X, 1000));
+          let dummy_y_added;
+          if (e.x === 0) {
+            dummy_y_added = ["Heart Rate 1"].concat(Raw_Y);
+          } 
 
-        const dummy_timeStampClickListener = (e) => {
-          selected_stamps_lst[parseInt(e.id.split(" ")[2]) - 1].push(e.index)
-          console.log("selected_stamps_lst is ", selected_stamps_lst)
+          const dummy_colorSelector_graph = (color, d) => '#01e925';
+
+          const dummy_chart_added = c3.generate({
+            bindto: dummy_chartDiv,
+            data: {
+              x: 'time',
+              xFormat: '%Y-%m-%dT%H:%M:%S.%LZ',
+              columns: [dummy_x_added, dummy_y_added],
+              labels: {
+                format: function (v, id, i, j) {
+                  if (selected_stamps_lst[e.x].includes(i)) {
+                    return +(+v).toFixed(2) + ''
+                  } else {
+                    return ''
+                  }
+                },
+              },
+              color: dummy_colorSelector_graph,
+            },
+            size: {
+              height: 60,
+            },
+            axis: {
+              x: {show: false, type: 'timeseries', localtime: false,
+               min: minX_curr_wave * 1000, max: maxX_curr_wave * 1000},
+              y: {show: true, tick: { count: 3, format: d3.format('.1f')}, padding: {top: 20, bottom: 6} }
+            },
+            legend: {
+              show: false
+            },
+            grid: dummy_gridData,
+          });
+
+          
+
         }
 
+        const dummay_barDiv = dummay_currentCatSelection.append('div').classed('chart-holder', true)
+            .append('div').classed('chart-holder-inner-bar', true).classed('chart-holder-inner', true);
 
+        const dummy_colorButtonSelector = (color, d) => '#ff7fc5';
+        const dummy_chart_selectButtons = c3.generate({
+          bindto: dummay_barDiv,
+          data: {
+            columns: [
+              ['data1', 5]
+            ],
+            types: {
+              data1: 'bar',
+            },
+            color: dummy_colorButtonSelector,
+            onclick: dummy_buttomClickListener,
+          },
+          size: {
+            height: 20,
+            width: 200
+          },
+          axis: {
+            rotated: true,
+            x: {
+              show: true,
+              type: 'category',
+              categories: ['Generate graph']
+            },
+            y: {
+              show: false
+            }
+          },
+          legend: {
+            show: false
+          },
+          tooltip: {
+            show: false
+          },
+          bar: {
+            width: 20
+          },
+        });
 
 
       },
