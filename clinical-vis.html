@@ -386,7 +386,7 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
     </div>
 
       <div class="chart-card">
-        <div class="chart-card-heading">Waveform Visualization & Labelling</div>
+        <div class="chart-card-heading">Graphs of Various Trends</div>
         <div id="chartstop"></div>
       </div>
     </div>
@@ -537,10 +537,10 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         // Generate the key and chart division for the first chart
         const dummy_keyAndChartDiv = dummay_currentCatSelection.append('div').classed(
             'key-and-chart-holder', true);
-        const dummy_chartUnits = "bpm";
+        const dummy_chartUnits = "calorie";
         const dummy_chartRange = [7900, 8250];
         const dummy_chartTitleDiv = dummy_keyAndChartDiv.append('div');
-        dummy_chartTitleDiv.classed('key-holder', true).html("Heart Rate");
+        dummy_chartTitleDiv.classed('key-holder', true).html("TPN");
         dummy_chartTitleDiv.append('span').classed('chart-units', true).classed('lab-units', true).html('(' + dummy_chartUnits + ')');
         const dummy_chartDiv = dummy_keyAndChartDiv.append('div')
                                         .classed('chart-holder', true)
@@ -619,7 +619,9 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
             dummy_y_added = ["Heart Rate 1"].concat(Raw_Y);
           } 
 
-          const dummy_colorSelector_graph = (color, d) => '#01e925';
+          const dummy_colorSelector_range = function(color, d) {
+              return '#01e925';
+          }
 
           const dummy_chart_added = c3.generate({
             bindto: dummy_chartDiv,
@@ -629,14 +631,10 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
               columns: [dummy_x_added, dummy_y_added],
               labels: {
                 format: function (v, id, i, j) {
-                  if (selected_stamps_lst[e.x].includes(i)) {
-                    return +(+v).toFixed(2) + ''
-                  } else {
-                    return ''
-                  }
+                  return ''
                 },
               },
-              color: dummy_colorSelector_graph,
+              color: dummy_colorSelector_range,
             },
             size: {
               height: 60,
@@ -652,7 +650,7 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
             grid: dummy_gridData,
           });
 
-          
+
 
         }
 
