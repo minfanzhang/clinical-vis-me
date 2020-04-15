@@ -314,6 +314,43 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         font-family: 'Roboto', sans-serif;
         font-weight: 400;
       }
+      #table-holder-out {
+        border: 1px solid #D3DADB;
+        border-radius: 3px;
+        background: rgba(255, 251, 249,0.12);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        width: 65%;
+        min-width: 35%;
+        display: inline-block;
+        vertical-align: top;
+        position: relative;
+      }
+      #table-holder-out-heading {
+        font-weight: 400;
+        font-size: 16sp;
+        color: #561f06;
+        background: #ff0000;
+        padding: 6px;
+      }
+      #tableholder {
+        overflow-x: auto;
+        margin-left: 0px;
+      }
+      thead th{
+        border: solid 0.5px #ccd7e5;
+        padding: 2px;
+        height: 24px;
+        font-size: 13px;
+        background: #eff6ff;
+      }
+      thead th.fixed-normal {
+        min-width: 250px;
+        width: 250px;
+      }
+      td.fixed-normal {
+        min-width: 250px;
+        width: 250px;
+      }
     </style>
     <div class="basic-data">
       <div class="basic-data-heading">Patient Information</div>
@@ -343,6 +380,10 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
       </div>
     </div>
 
+    <div id="table-holder-out">
+      <div class="table-holder-out-heading">Static Variables</div>
+      <div id="tableholder"></div>
+    </div>
 
       <div class="chart-card">
         <div class="chart-card-heading">Waveform Visualization & Labelling</div>
@@ -440,11 +481,10 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         this.$.chartstop.innerHTML = '';
         console.log("json is ", json)
         this.generate_single_waveform(json.times, json.values);
+        this.displayTimeTable();
       },
 
       generate_single_waveform(Raw_X, Raw_Y) {
-        console.log("Raw_X has type : ", typeof Raw_X)
-        console.log("Raw_X is : ", Raw_X)  
         //parsed_raw_x = JSON.parse(Raw_X);
         //console.log("rarsed Raw_X has type : ", parsed_raw_x)
         minX = Number.MAX_VALUE;
@@ -576,258 +616,56 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
           console.log("selected_stamps_lst is ", selected_stamps_lst)
         }
 
-        const dummy_buttomClickListener = (e) => {
-          
-          //const dummy_x_added = ["time", 6727679100000, 6727680900000, 6727692600000, 6727662000000];
-          maxX_curr_wave = Raw_X[Raw_X.length - 1];
-          minX_curr_wave = Raw_X[0];
-          const dummy_x_added = ["time"].concat(this.ListTimes(Raw_X, 1000));
-          let dummy_y_added;
-          if (e.x === 0) {
-            dummy_y_added = ["Heart Rate 1"].concat(Raw_Y);
-          } 
-          else if(e.x === 1) {
-            dummy_y_added = ["Heart Rate 2", 37.32, 37.68, 37.51, 37.41];
-          }
-          else if(e.x === 2) {
-            dummy_y_added = ["Heart Rate 3", 37.66, 37.54, 37.43, 37.32];
-          }          
-          else if(e.x === 3) {
-            dummy_y_added = ["Heart Rate 4", 37.45, 37.44, 37.57, 37.39];
-          }
-          else if(e.x === 4) {
-            dummy_y_added = ["Heart Rate 5", 37.35, 37.45, 37.58, 37.62];
-          }
-          else {
-            dummy_y_added = ["Heart Rate 6", 37.49, 37.32, 37.68, 37.51];
-          }
 
-          const dummy_colorSelector_range = function(color, d) {
-            if (selected_stamps_lst[e.x].length === 2 && d.index >= selected_stamps_lst[e.x][0] 
-                && d.index <= selected_stamps_lst[e.x][1]) {
-              return '#db5825';
-            }
-            else {
-              return '#01e925';
-            }
-            
-          }
 
-          const dummy_chart_added = c3.generate({
-            bindto: dummy_chartDiv,
-            data: {
-              x: 'time',
-              xFormat: '%Y-%m-%dT%H:%M:%S.%LZ',
-              columns: [dummy_x_added, dummy_y_added],
-              labels: {
-                format: function (v, id, i, j) {
-                  if (selected_stamps_lst[e.x].includes(i)) {
-                    return +(+v).toFixed(2) + ''
-                  } else {
-                    return ''
-                  }
-                },
-              },
-              color: dummy_colorSelector_range,
-              onclick: dummy_timeStampClickListener,
-            },
-            size: {
-              height: 60,
-            },
-            axis: {
-              x: {show: false, type: 'timeseries', localtime: false,
-               min: minX_curr_wave * 1000, max: maxX_curr_wave * 1000},
-              y: {show: true, tick: { count: 3, format: d3.format('.1f')}, padding: {top: 20, bottom: 6} }
-            },
-            legend: {
-              show: false
-            },
-            grid: dummy_gridData,
-          });
 
-          //Adjust the zoom in time scale(heading)
-          if (selected_stamps_lst[e.x].length === 2) {
-            console.log("Entered the loop!")
-            minX_Zoom = dummy_x_added[selected_stamps_lst[e.x][0]] / 1000;
-            maxX_Zoom = dummy_x_added[selected_stamps_lst[e.x][1]] / 1000;
+      },
 
-            const offsetToUTC_Zoom = new Date(minX_Zoom * 1000).getTimezoneOffset() * 60; 
-            const xScale_Zoom = d3.time.scale()
-                              .domain([new Date((minX_Zoom + offsetToUTC_Zoom) * 1000), 
-                                      new Date((maxX_Zoom + offsetToUTC_Zoom) * 1000)])
-                              .rangeRound([0, xAxisWidth]);
-            
-            const xAxis_Zoom = d3.svg.axis()
-                                .orient('top')
-                                .scale(xScale_Zoom);
-            
-            zoomChartxAxisVis.selectAll("*").remove()
-            zoomChartxAxisVis.append("g")
-                      .attr("class", "xaxis")
-                      .attr("transform", "translate(0," + xAxisHeight + ")")
-                      .call(xAxis_Zoom.tickFormat(d3.timeFormat("%S:%L")).tickSize(-10));
+      displayTimeTable: function() {
+        d3.select(this.$.tableholder).html("");
+        var table = d3.select(this.$.tableholder).append('table')
+        var thead = table.append('thead')
+        var tbody = table.append('tbody');
+        const columns = ['Source', 'Item', 'Value']
 
-            // Generate the contents of the second(zoom in) chart
-            maxX_zoom_wave = Raw_X[selected_stamps_lst[e.x][1]];
-            minX_zoom_wave = Raw_X[selected_stamps_lst[e.x][0]];
-            const zoom_x_added = ["time"].concat(this.ListTimes(Raw_X.slice(selected_stamps_lst[e.x][0],
-             selected_stamps_lst[e.x][1] + 1), 1000));
-            let zoom_y_added;
-            if (e.x === 0) {
-              zoom_y_added = ["Heart Rate 1 - Zoom"].concat(Raw_Y.slice(selected_stamps_lst[e.x][0],
-                selected_stamps_lst[e.x][1] + 1));
-            }
+        thead.append('tr')
+          .selectAll('th')
+          .data(columns).enter()
+          .append('th')
+            .text((column, i) => column)
+            .classed('fixed-normal', true)
 
-            const zoom_chart_added = c3.generate({
-              bindto: zoomchartDiv,
-              data: {
-                x: 'time',
-                xFormat: '%Y-%m-%dT%H:%M:%S.%LZ',
-                columns: [zoom_x_added, zoom_y_added],
-                labels: {
-                  format: function (v, id, i, j) {
-                    if (selected_stamps_lst[e.x].includes(i)) {
-                      return ''
-                    } else {
-                      return ''
-                    }
-                  },
-                },
-                color: dummy_colorSelector_range,
-              },
-              size: {
-                height: 60,
-              },
-              axis: {
-                x: {show: false, type: 'timeseries', localtime: false,
-                min: minX_zoom_wave * 1000, max: maxX_zoom_wave * 1000},
-                y: {show: true, tick: { count: 3, format: d3.format('.1f')}, padding: {top: 20, bottom: 6} }
-              },
-              legend: {
-                show: false
-              },
-              grid: dummy_gridData,
+        allEvents = [{source: "Comprehensive flowsheet", item: "HR", value: "value of HR"},
+                    {source: "Comprehensive flowsheet", item: "SBP", value: "value of SBP"},
+                    {source: "Comprehensive flowsheet", item: "Specific hourly ins", value: "value of ins/h"},
+                    {source: "Comprehensive flowsheet", item: "MAP", value: "value of MAP"},
+                    {source: "Lines, drains, and airways", item: "Type of feeding tube in place", value: "tube type"}]
+
+        var rows = tbody.selectAll('tr')
+          .data(allEvents)
+          .enter()
+          .append('tr');
+
+        var cells = rows.selectAll('td')
+          .data(function (event) {
+            return columns.map((column) => {
+              if (column == 'Source') {
+                return {column: column, value: event.source}
+              }
+              if (column == 'Item') {
+                return {column: column, value: event.item};
+              }
+              if (column == 'Value') {
+                return {column: column, value: event.value};
+              }
             });
-            
-          } else {
-            
-            zoomChartxAxisVis.append("g")
-                      .attr("class", "xaxis")
-                      .attr("transform", "translate(0," + xAxisHeight + ")")
-                      .call(xAxis.tickFormat(d3.timeFormat("%S:%L")).tickSize(-10));
-          }
-
-        }
-
-        const dummay_barDiv = dummay_currentCatSelection.append('div').classed('chart-holder', true)
-            .append('div').classed('chart-holder-inner-bar', true).classed('chart-holder-inner', true);
-
-        const dummy_colorButtonSelector = (color, d) => '#ff7fc5';
-        const dummy_chart_selectButtons = c3.generate({
-          bindto: dummay_barDiv,
-          data: {
-            columns: [
-              ['data1', 10, 10, 10, 10, 10, 10]
-            ],
-            types: {
-              data1: 'bar',
-            },
-            color: dummy_colorButtonSelector,
-            onclick: dummy_buttomClickListener,
-          },
-          size: {
-            height: 200,
-            width: 200
-          },
-          axis: {
-            rotated: true,
-            x: {
-              show: true,
-              type: 'category',
-              categories: ['Waveform 1', 'Waveform 2', 'Waveform 3', 'Waveform 4', 'Waveform 5', 'Waveform 6']
-            },
-            y: {
-              show: false
-            }
-          },
-          legend: {
-            show: false
-          },
-          tooltip: {
-            show: false
-          },
-          bar: {
-            width: 20
-          },
-        });
-
-
-
-        const dummay_labelSelectorDiv = dummay_currentCatSelection.append('div').classed('chart-holder', true)
-            .append('div').classed('chart-holder-inner-bar', true).classed('chart-holder-inner', true);
-
-
-        const dummy_labelClickListener = (e) => {
-          if (e.x >= 0 && e.x <= 4) {
-            num_label = e.x + 1;
-            dummay_labelPadDiv.html("Note " + num_label + " for this waveform.");
-          } else {
-            dummay_labelPadDiv.html("Not sure about this waveform.");
-          }
-
-        }
-
-        const dummy_chart_selectLabels = c3.generate({
-          bindto: dummay_labelSelectorDiv,
-          data: {
-            columns: [
-              ['labels', 10, 10, 10, 10, 10, 10]
-            ],
-            types: {
-              labels: 'bar',
-            },
-            onclick: dummy_labelClickListener,
-          },
-          size: {
-            height: 60,
-            width: 600
-          },
-          axis: {
-            x: {
-              show: true,
-              type: 'category',
-              categories: ['note 1', 'note 2', 'note 3', 'note 4', 'note 5', 'not sure']
-            },
-            y: {
-              show: false
-            }
-          },
-          legend: {
-            show: false
-          },
-          tooltip: {
-            show: false
-          },
-          bar: {
-            width: 50
-          },
-        });
-
-
-
-        const dummay_labelPadDiv = dummay_currentCatSelection.append('div').classed('chart-holder', true)
-            .append('div').classed('chart-holder-inner-bar', true).classed('chart-holder-inner', true);
-
-        dummay_labelPadDiv.html("This is a note!");
-
-        // All click listeners
-
-
-
-
+          })
+          .enter()
+          .append('td')
+          .text((d) => d.value)
+          .classed('fixed-normal', true)
+        
       }
-
-
 
 
 
