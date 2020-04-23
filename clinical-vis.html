@@ -162,17 +162,13 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         padding: 6px;
       }
       .note-text {
-        min-height: 300px;
-        height: 400px;
+        white-space: pre-wrap;
+        border: solid 1px #191970;
+        background: #fcfce4;
+        color: #09096b;
+        height: 250px;
+        padding: 4px;
         overflow-y: auto;
-        overflow-x: hidden;
-        resize: vertical;
-        white-space: pre-line;
-        font-size: 11pt;
-        line-height: 1.4em;
-        padding: 12px;
-        color: rgba(0,0,0,0.84);
-        border-top: solid 3px #1f541a;
       }
       .lab-card {
         border: solid 1px #D3DADB;
@@ -325,6 +321,17 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         vertical-align: top;
         position: relative;
       }
+      #notes-holder-out {
+        border: 1px solid #D3DADB;
+        border-radius: 3px;
+        background: rgba(255, 251, 249,0.12);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        width: 65%;
+        min-width: 35%;
+        display: inline-block;
+        vertical-align: top;
+        position: relative;
+      }
       #table-holder-out-heading {
         font-weight: 400;
         font-size: 16sp;
@@ -383,6 +390,13 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
     <div id="table-holder-out">
       <div class="table-holder-out-heading">Static Variables</div>
       <div id="tableholder"></div>
+    </div>
+
+    <div id="notes-holder-out">
+      <div class="table-holder-out-heading">Notes</div>
+      <div id="notesholder">
+        <div class="note-text">Test Note 1</div>
+      </div>
     </div>
 
       <div class="chart-card">
@@ -482,6 +496,7 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
         console.log("json is ", json)
         this.generate_single_waveform(json.times, json.values);
         this.displayTimeTable();
+        //this.displayNotes();
       },
 
       generate_single_waveform(Raw_X, Raw_Y) {
@@ -743,6 +758,14 @@ $.getJSON('http://lore-api.sickkids.ca/api/data?measure=157&patient=2673678&star
           .text((d) => d.value)
           .classed('fixed-normal', true)
         
+      },
+
+      displayNotes: function() {
+        var notesholder = d3.select(this.$.notesholder);
+        notesholder.html("");
+        const enterSelection = notesholder.selectAll('div')
+          .append('div').html('<div class="a">Note 1</div>');
+        enterSelection.select('.a').text("Note 1");
       }
 
 
